@@ -2,6 +2,7 @@
 <project name="TranformXml" default="TransformFile">
 	<target name="TransformFile">
 		<xslt in="test.xml" out="student.html" style="img.xsl"/>
+		<xslt in="test2.xml" out="student2.html" style="img.xsl"/>
 	</target>
 	<!--<target name="TransformAll">
 		<xslt basedir="." destdir="."

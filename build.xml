@@ -1,13 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project name="TranformXml" default="TransformFile">
-	<target name="TransformFile">
-		<xslt in="test.xml" out="student.html" style="img.xsl"/>
-		<xslt in="test2.xml" out="student2.html" style="img.xsl"/>
+<project name="TranformXml" default="simple" basedir=".">
+	<property name="files_build" value="files_build.xml"/>
+	<property name="scofiles_build" value="scofiles_build.xml"/>
+	<target name="simple">
+		<xslt in="side1.html" out="student.html" style="xsl/asset.xsl"/>
 	</target>
-	<!--<target name="TransformAll">
-		<xslt basedir="." destdir="."
-			includes="**/*.ext.xml"
-			style="student_html.xsl"
-		/>
-	</target>-->
+	<target name="path">
+		<echo>basedir:${basedir}</echo>
+		<echo>ant.file:${user.dir}</echo>
+	</target>
+	<target name="template1" depends="copy_asset_files, sco, asset">
+		<xslt in="${user.dir}/_toc.xml" out="${user.dir}/output/index.html" style="templates/template1/xsl/toc.xsl">
+			<param name="inputpath" expression="${user.dir}"/>
+			<param name="outputpath" expression="${user.dir}/output"/>
+		</xslt>
+		<copy todir="${user.dir}/output/css">
+			<fileset dir="templates/template1/css"/>
+		</copy>
+		<copy todir="${user.dir}/output/js">
+			<fileset dir="templates/template1/js"/>
+		</copy>
+	</target>
+	<target name="collect_asset_files">
+		<xslt in="${user.dir}/_toc.xml" out="files.xml" style="templates/template1/xsl/files.xsl">
+			<param name="inputpath" expression="${user.dir}"/>
+			<param name="outputpath" expression="${user.dir}/output"/>
+		</xslt>
+	</target>
+	<target name="build_asset_files" depends="collect_asset_files">
+		<ant antfile="files.xml" />
+	</target>
+
+	<target name="copy_asset_files" depends="build_asset_files">
+		<delete file="files.xml"/>
+	</target>
+
+	<target name="sco" depends="create_scofiles_build">
+		<ant antfile="${scofiles_build}" />
+	</target>
+
+	<target name="create_scofiles_build">
+		<xslt in="${user.dir}/_toc.xml" out="${scofiles_build}" style="templates/template1/xsl/sco_files_build.xsl">
+			<param name="inputpath" expression="${user.dir}"/>
+			<param name="outputpath" expression="${user.dir}/output"/>
+		</xslt>
+	</target>
+
+	<target name="asset" depends="create_assetfiles_build">
+		<ant antfile="${assetfiles_build}" />
+	</target>
+
+	<target name="create_assetfiles_build">
+		<xslt in="${user.dir}/_toc.xml" out="${assetfiles_build}" style="templates/template1/xsl/asset_files_build.xsl">
+			<param name="inputpath" expression="${user.dir}"/>
+			<param name="outputpath" expression="${user.dir}/output"/>
+		</xslt>
+	</target>
 </project>

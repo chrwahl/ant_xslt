@@ -1,1 +1,5 @@
 Hello World!
+
+
+ant -Dproject=kursus1 template1
+ant -f ../build.xml template1
